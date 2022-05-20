@@ -6,7 +6,7 @@ const markup = createGalleryMarkup(galleryItems);
 
 listGalleryItems.insertAdjacentHTML("afterbegin", markup);
 listGalleryItems.addEventListener("click", onGalleryItemsClick);
-listGalleryItems.addEventListener("keydown", onGalleryItemsClose);
+// listGalleryItems.addEventListener("keydown", onEscPress);
 
 function createGalleryMarkup(galleryItems) {
 	return galleryItems
@@ -36,14 +36,28 @@ function onGalleryItemsClick(event) {
 		return;
 	}
 
-	instance = basicLightbox.create(`
-    <img src="${event.target.dataset.source}" width="800" height="600">`);
+	instance = basicLightbox.create(
+		`
+    <img src="${event.target.dataset.source}" width="800" height="600">`,
+		{
+			onShow,
+		},
+	);
 
 	instance.show();
 }
 
-function onGalleryItemsClose(event) {
+function onShow() {
+	window.addEventListener("keydown", onEscPress);
+}
+
+function onClose() {
+	window.removeEventListener("keydown", onEscPress);
+}
+
+function onEscPress(event) {
 	if (event.code === "Escape") {
 		instance.close();
+		onClose();
 	}
 }
